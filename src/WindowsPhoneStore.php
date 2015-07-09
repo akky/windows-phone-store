@@ -1,5 +1,8 @@
 <?php namespace Akky\WindowsPhoneStore;
- 
+
+class WindowsPhoneStoreException extends \Exception {
+}
+
 class WindowsPhoneStore {
   const APP_ENDPOINT = 'http://marketplaceedgeservice.windowsphone.com/v8/catalog/apps/';
   const IMAGE_ENDPOINT = 'http://cdn.marketplaceimages.windowsphone.com/v8/images/';
@@ -39,20 +42,25 @@ class WindowsPhoneStore {
       'http'=>array(
         'method'=>"GET",
         'header' => 'User-Agent: Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)',
+        'ignore_errors' => true // suppress file_get_contents() errors to be displayed
       )
     );
     $context = stream_context_create($streamOptions);
     $xmlString = file_get_contents($url, false, $context);
+    // by ignore_errors, HTTP error is returned in text like "404 Not Found"
+    if (preg_match('/\A(?P<status>\d{3})/', $xmlString, $matched)) {
+      throw new WindowsPhoneStoreException($matched['status']);
+    }
     if (!$xmlString) {
-      throw new Exception('Failed to fetch app page');
+      throw new WindowsPhoneStoreException('Failed to fetch app page');
     }
     $xml = simplexml_load_string($xmlString);
     if (!$xml) {
-      throw new Exception('Failed to read page as xml');
+      throw new WindowsPhoneStoreException('Failed to read page as xml');
     }
     $a = $xml->children("http://www.w3.org/2005/Atom");
     $aentry = $a->entry->children();
-
+//var_dump($xml, $a, $aentry);
     return self::convertXml2Array($xml, $a, $aentry);
   }
 
@@ -88,6 +96,8 @@ class WindowsPhoneStore {
         }
     }
 
+//    $offers = array();
+//    $stringfiedOffers = (string)($xml->offers);
     if (isset($xml->offers)) {
         foreach ($xml->offers->offer as $offer) {
             $clientTypes = array();
