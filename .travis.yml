@@ -1,0 +1,17 @@
+language: php
+
+php:
+  - 5.3
+
+branches:
+  only: 
+    - master
+
+before_script:
+  - composer self-update
+  - composer install --dev --prefer-source --no-interaction
+
+script:
+  - mkdir -p build/logs
+  - phpunit --coverage-clover build/logs/clover.xml --configuration phpunit.xml.dist tests
+

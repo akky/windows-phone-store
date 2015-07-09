@@ -1,0 +1,26 @@
+{
+    "name": "akky/windows-phone-store",
+    "description": "Windows Phone Store app info access client",
+    "license": "MIT",
+    "keywords": ["Windows Phone", "app store"],
+    "type": "library",
+    "homepage": "https://github.com/akky/windows-phone-store",
+    "authors": [
+        {
+            "name": "Akky AKIMOTO",
+            "email": "akky+github@gmail.com",
+            "homepage": "http://developer.cybozu.co.jp/akky/"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.3"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.0.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Akky\\WindowsPhoneStore\\": "src"
+        }
+    }
+}
